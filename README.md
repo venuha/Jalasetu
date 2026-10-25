@@ -16,6 +16,10 @@ Open http://127.0.0.1:8092. `Launch JalaSetu.command` can use this computer's ex
 
 The interface uses location-neutral operations and management language. Connected source records retain their actual asset names and provenance so real observations are not misrepresented as generic measurements.
 
+## Render hosting
+
+A protected single-process pilot can be deployed from the included `render.yaml`. It uses a paid persistent disk, generated management access and background research jobs. Hosted provider secrets are managed in Render, not the browser. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, costs to review, access and verification. This does not add per-user official authorization.
+
 ## Authority workflow
 
 1. **Authority overview:** selected-reservoir evidence, report dates, missing observations, coordination cases and scenario review counts. Unknown operating release availability stays unknown.

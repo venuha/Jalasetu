@@ -8,9 +8,10 @@ from .integrations import weather,enrich
 from .network import network,lift_capacity,LiftScenario
 from .supervisor import Mission,MissionReview,start,operate
 from .farmer import FarmBudget,farm_budget,PowerEvent,ReleaseEvent,power_event,release_event,monitoring,RainEvent,rain_event,operational_constraints
-from . import public_data,research_panel,connections,authority
+from . import public_data,research_panel,research_jobs,connections,authority
 from pydantic import Field
 from .models import StrictModel
+from .access import lifespan,protect,hosted
 
 class EvidenceRequest(StrictModel):
     latitude:float=Field(default=16.08,ge=15,le=20)
@@ -20,7 +21,8 @@ class EvidenceRequest(StrictModel):
 class SearchRequest(StrictModel):
     query:str=Field(min_length=5,max_length=500)
 
-app=FastAPI(title='JalaSetu • Water to field',description='Local simulation. No operational control or authenticated official approvals.')
+app=FastAPI(title='JalaSetu • Water operations',description='Planning prototype. No physical control or authenticated official approvals.',lifespan=lifespan)
+app.middleware('http')(protect)
 
 @app.get('/api/authority')
 def authority_overview():return authority.overview()
@@ -46,6 +48,7 @@ def connection_status():return connections.status()
 
 @app.post('/api/connections')
 def connection_update(item:connections.ConnectionUpdate):
+    if hosted():raise HTTPException(403,'Hosted connections are managed in the hosting provider environment settings.')
     try:return connections.update(item)
     except ValueError as e:raise HTTPException(422,str(e))
 
@@ -60,6 +63,16 @@ def public_search(item:SearchRequest):return public_data.search_public(item.quer
 
 @app.post('/api/research-panel/runs')
 def research_start(item:research_panel.PanelRequest):return research_panel.start(item)
+
+@app.post('/api/research-panel/jobs',status_code=202)
+def research_job_start(item:research_panel.PanelRequest):
+    try:return research_jobs.submit(item)
+    except ValueError as e:raise HTTPException(429,str(e))
+
+@app.get('/api/research-panel/jobs/{run_id}')
+def research_job_read(run_id:str):
+    try:return research_jobs.read(run_id)
+    except ValueError as e:raise HTTPException(404,str(e))
 
 @app.get('/api/research-panel/runs/{run_id}')
 def research_read(run_id:str):

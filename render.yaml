@@ -1,0 +1,29 @@
+# Paid service and disk: review Render's current price before creating the service.
+services:
+  - type: web
+    name: jalasetu
+    runtime: python
+    plan: starter
+    repo: https://github.com/venuha/Jalasetu
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/health
+    autoDeployTrigger: 'off'
+    disk:
+      name: jalasetu-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.12
+      - key: WEB_CONCURRENCY
+        value: '1'
+      - key: JALASETU_DEPLOYED
+        value: 'true'
+      - key: JALASETU_DB
+        value: /var/data/jalasetu.sqlite3
+      - key: JALASETU_ACCESS_USER
+        value: management
+      - key: JALASETU_ACCESS_PASSWORD
+        generateValue: true

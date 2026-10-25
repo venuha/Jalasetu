@@ -42,11 +42,13 @@ def jev_config():
         return dict(key=key,model=CONFIG.get('jev_model') or os.getenv('JALASETU_JEV_MODEL','jev-latest')) if key else None
 
 def status():
+    from .access import hosted
     try:c=llm_config()
     except ValueError:c=None
     return dict(llm_configured=bool(c),provider=CONFIG.get('provider','environment' if c else 'not configured'),
         model=c['model'] if c else None,tavily_configured=bool(tavily_key()),jev_configured=bool(jev_config()),jev_model=(jev_config() or {}).get('model'),
-        storage='Process memory only for keys entered here; restart clears them.',
+        editable=not hosted(),
+        storage='Hosted mode: configure model and search secrets in your hosting environment.' if hosted() else 'Process memory only for keys entered here; restart clears them.',
         note='OpenAI/Tavily are separate services. Public-source fetches and numeric calculations do not require an LLM key. Provider API usage may be billed.')
 
 def update(item):
