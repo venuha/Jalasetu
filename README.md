@@ -16,7 +16,7 @@ Open http://127.0.0.1:8092. On this computer, `Launch JalaSetu.command` can also
 
 ## Included
 
-- RAG-workspace visual style: dark green navigation, cream canvas, serif headings and evidence panels, implemented with React components.
+- Independent marine-blue React interface: ice-blue canvas, white navigation, modern sans-serif typography, water illustrations and a persistent agent workflow strip grounded in saved checkpoint state.
 - Animated dam-to-tank landscape and interactive Kaleshwaram reverse-lift schematic, with keyboard-accessible nodes and reduced-motion support.
 - Single-package Kaleshwaram lift-capacity calculator separating historical design, hypothetical power/flow envelopes, and unverified current availability.
 - Durable LangGraph supervisor with conditional tool selection, bounded power alternatives, SQLite checkpoints and a real human interrupt that resumes across restarts.

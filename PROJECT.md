@@ -49,7 +49,7 @@ Open-Meteo is implemented as an optional live preview adapter. Forecast success 
 
 ## Implementation prompts and iterations
 
-The build followed the user's requests to track water from reservoir to field, protect drinking water, calculate electricity from irrigation needs, provide crop-demand recommendations, require official-style reviews, and match the existing RAG workspace style using React. The implementation began with deterministic calculation tools and separate review gates; the interface was then changed to React after the user's explicit preference.
+The build followed the user's requests to track water from reservoir to field, protect drinking water, calculate electricity from irrigation needs, provide crop-demand recommendations, require official-style reviews, and implement the interface using React. The implementation began with deterministic calculation tools and separate review gates; the interface was then changed to React after the user's explicit preference.
 
 Subsequent iterations added actual pump-window capacity and travel-time checks, power-window comparison, source-water reservation transactions, changed-evidence invalidation, daily schedules, blocked duplicate route scheduling and delivery-shortfall prompts. These reflect why a reservoir-storage dashboard alone is insufficient.
 
@@ -86,3 +86,7 @@ The folder includes runnable source, tests, a prebuilt React bundle, dataset gen
 The Farmer & alerts screen converts acres and supplemental application depths into a water volume and pump duration. Verified effective rain reduces the requirement, while forecast rain can request a review before irrigation. A village rain event is separately scoped to the fictional village and changes subsequent plans. Feeder outages zero affected lift allocations, and new events invalidate pending review.
 
 Utility-window and feeder observations generate in-app farmer updates, unexpected-outage escalations and uncertainty notices. The release monitor compares user-entered demo meter rates and cumulative volumes against demo approval thresholds and avoids repeated high-state alerts. No external SMS, WhatsApp or voice message is sent; production requires opt-in contacts, provider integration and continuously authenticated telemetry.
+
+## Visual design revision
+
+JalaSetu now has an independent marine-blue visual system with white navigation, an ice-blue canvas and sans-serif headings. A persistent workflow strip displays saved agent tool steps and the actual human-review state; the overview launches the durable supervisor. Idle and persisted states are labelled explicitly rather than presented as a continuously running agent.

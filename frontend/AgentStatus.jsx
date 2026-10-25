@@ -1,0 +1,9 @@
+import React,{useEffect,useState} from 'react';
+export default function AgentStatus({view,onOpen}){
+ const [run,setRun]=useState(null);
+ useEffect(()=>{let active=true;const load=async()=>{const id=localStorage.getItem('jalasetu-agent-run');if(!id){setRun(null);return;}try{const r=await fetch('/api/agent/runs/'+encodeURIComponent(id));if(r.ok&&active)setRun(await r.json());else if(active)setRun(null)}catch{if(active)setRun(null)}};load();window.addEventListener('jalasetu-agent-change',load);return()=>{active=false;window.removeEventListener('jalasetu-agent-change',load)}},[view]);
+ const steps=[['read_evidence','Observe'],['calculate_water_and_power','Calculate'],['compare_power_windows','Compare'],['synthesize','Recommend'],['human_analysis_review','Human review']];
+ const events=run?.state?.events||[];
+ const status=run?.waiting_for_review?'Waiting for your review':run?.state?.status==='proposal_saved'?'Proposal ready for operating review':run?.state?.status==='analysis_rejected'?'Analysis rejected':run?'Saved mission':'Ready for a planning mission';
+ return <section className="agent-status" aria-label="Agent workflow status"><div className="agent-status-title"><span className="agent-orb">✧</span><div><strong>JalaSetu agent</strong><span>{status}</span></div></div><div className="agent-steps">{steps.map(([tool,label],i)=>{const done=events.some(e=>e.tool===tool);return <React.Fragment key={tool}>{i>0&&<i/>}<span className={done?'complete':run?.waiting_for_review&&i===4?'waiting':''}><b>{done?'✓':i+1}</b>{label}</span></React.Fragment>})}</div><button className="text-btn" onClick={onOpen}>{run?'Open saved mission':'Start a mission'} ↗</button>{run&&<div className="agent-evidence">{events.length} recorded tool steps · Checkpoint {run.id} · SQLite persistence</div>}</section>
+}
