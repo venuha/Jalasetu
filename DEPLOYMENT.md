@@ -11,19 +11,15 @@ Deploy the existing GitHub repository with its root `render.yaml` Blueprint. The
 - `JALASETU_ACCESS_USER=management`. Render generates `JALASETU_ACCESS_PASSWORD`; retrieve it yourself from the service's Environment settings. The app displays a management sign-in page. A successful login sets an eight-hour, HttpOnly, Secure, SameSite=Strict signed session cookie; the password is never stored in the browser. HTTPS is supplied by Render. Do not paste the password in chat or commit it.
 - This is one shared management sign-in for a pilot. It is not per-user identity, official role authorization, a signed legal release system or a public multi-tenant service. Share access only with intended reviewers.
 
-## Optional model and discovery connections
+## Visitor-owned model and discovery connections
 
-Set secrets in the Render service's Environment settings, then deploy the change:
+Visitors sign in, open **Connections**, enter their own OpenAI/model key and exact model ID, optionally enter a Jev/TypeSafe key and Tavily key, then choose **Connect for this session**. They must never paste keys into chat.
 
-| Variable | Use |
-| --- | --- |
-| `OPENAI_API_KEY`, `OPENAI_MODEL` | Exact accessible model supporting tools and structured output |
-| `JALASETU_LLM_API_KEY`, `JALASETU_LLM_MODEL`, `JALASETU_LLM_BASE_URL` | Alternative supported provider configuration instead of the OpenAI pair |
-| `TYPESAFE_API_KEY` | Jev authority case routing |
-| `JALASETU_JEV_MODEL` | Optional exact Jev model; defaults to `jev-latest` |
-| `TAVILY_API_KEY` | Optional official-source discovery |
+Hosted provider keys are isolated by the signed browser session and held only in a process-memory dictionary. They are not saved in Render environment settings, files, SQLite, graph checkpoints, cookies, localStorage or sessionStorage. The login cookie contains a signed random session identifier, never a provider key. Keys expire 30 minutes after connection update, no later than the login-session expiry. Sign-out, explicit disconnection and server restart clear them. A periodic sweeper removes expired entries. Browser tab closure is not a reliable sign-out signal; use Disconnect or Sign out when finished.
 
-Hosted Connections shows configuration status; it does not permit browser editing of shared provider credentials. Public-source retrieval and deterministic calculations require no paid model credential. External providers can charge for use by signed-in reviewers.
+Hosted requests never fall back to owner-funded environment credentials. OpenAI, TypeSafe and Tavily are separate services and can bill the visitor's supplied accounts. Status APIs return configuration flags, model IDs and expiry time, never keys. Background jobs inherit only the submitting browser's scope; provider credentials never enter the graph state or job payload. Removing a key prevents new provider calls; an already started provider request may finish.
+
+The unauthenticated local single-user workspace retains its legacy environment configuration for development. Hosted session behavior is enforced independently of those local settings. No paid-provider execution is claimed by the mocked isolation tests.
 
 ## Research jobs
 
@@ -31,7 +27,7 @@ The UI submits a background job and polls its status. The free sandbox can lose 
 
 ## After deployment
 
-Verify Render reports Live, `/api/health` returns 200 and a request without credentials to `/api/dashboard` returns 401 and `/` redirects to the sign-in page. Sign in through the browser with the generated management credential and check the overview. Refresh public evidence and inspect failures/dates. Configure optional model keys to verify Jev and the LLM panel. Source availability can differ from local access; failed sources remain visible.
+Verify Render reports Live, `/api/health` returns 200 and a request without credentials to `/api/dashboard` returns 401 and `/` redirects to the sign-in page. Sign in through the browser with the generated management credential and check the overview. Refresh public evidence and inspect failures/dates. Connect your own temporary model keys in Connections to verify Jev and the LLM panel. Source availability can differ from local access; failed sources remain visible.
 
 For durable records later, explicitly upgrade to a paid instance, attach a persistent disk, set JALASETU_DB to a path under its mount point and set JALASETU_STORAGE_MODE=persistent. Do not represent this free sandbox as durable storage. Export important demo packets before a restart. For production adoption, add government/organization SSO, per-user authorization, reconciled telemetry, independent backup/restore procedures, model evaluations and a durable external job/database architecture.
 

@@ -28,11 +28,11 @@ def test_hosted_routes_require_management_access(hosted):
         response=client.get('/api/dashboard',auth=hosted)
         assert response.status_code==200 and response.headers['cache-control']=='no-store'
 
-def test_hosted_provider_secrets_cannot_be_changed_in_browser(hosted):
+def test_basic_api_access_cannot_set_browser_session_keys(hosted):
     with TestClient(app) as client:
         assert client.get('/api/connections',auth=hosted).json()['editable'] is False
         response=client.post('/api/connections',json={'clear':True},auth=hosted)
-        assert response.status_code==403
+        assert response.status_code==422
 
 def test_hosted_startup_fails_closed(hosted,monkeypatch):
     validate_hosting()

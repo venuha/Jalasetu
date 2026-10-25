@@ -49,7 +49,7 @@ No production authentication or legal signing is implemented. Demo reviewer name
 
 Public collectors request official NPP report links dynamically, parse report rows with units/dates/pages, try KRMB, retrieve modelled weather and optionally collect an explicitly secondary storage observation. Authentication failures, timeouts and unavailable measurements are recorded. Tavily is optional discovery, not measurement validation.
 
-A separate TypeSafe key enables Jev's narrow authority-routing judgments. OpenAI or a supported compatible provider with an exact model ID enables the five research roles. Credentials entered in Connections are process-memory only. Without credentials, deterministic tools, public evidence, manual case assignment and the scenario review demonstration remain available.
+A separate TypeSafe key enables Jev's narrow authority-routing judgments. OpenAI or a supported compatible provider with an exact model ID enables the five research roles. Hosted credentials entered in Connections are isolated by signed browser session and expire after 30 minutes; they clear on logout, explicit removal and restart. They never enter persistent state, and hosted calls do not fall back to owner credentials. Background jobs and parallel model roles inherit only the submitting session’s scope. Without credentials, deterministic tools, public evidence, manual case assignment and the scenario review demonstration remain available.
 
 ## Validation and limits
 

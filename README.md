@@ -18,7 +18,7 @@ The interface uses location-neutral operations and management language. Connecte
 
 ## Render hosting
 
-A protected single-process free sandbox can be deployed from the included `render.yaml`. It uses temporary cloud storage, generated management access and background research jobs. Saved cloud cases and reviews may reset when the service restarts or redeploys; the interface displays this limitation. Hosted provider secrets are managed in Render, not the browser. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, costs to review, access and verification. This does not add per-user official authorization.
+A protected single-process free sandbox can be deployed from the included `render.yaml`. It uses temporary cloud storage, generated management access and background research jobs. Saved cloud cases and reviews may reset when the service restarts or redeploys; the interface displays this limitation. Each signed-in visitor connects their own temporary provider keys in Connections; hosted keys are isolated and never saved to Render or the database. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, costs to review, access and verification. This does not add per-user official authorization.
 
 ## Authority workflow
 
@@ -33,7 +33,7 @@ A protected single-process free sandbox can be deployed from the included `rende
 
 ## Models and credentials
 
-Open **Connections** and enter credentials there, not in chat. Entered keys stay in server process memory; they are not returned by status APIs, put in browser storage or saved in SQLite checkpoints. Restart clears entered keys. Server environment credentials remain until removed from the environment. `.env.example` documents variables; the server does not automatically load `.env` files.
+Open **Connections** and enter credentials there, not in chat. Hosted keys stay in isolated server memory for the signed-in browser session. They expire 30 minutes after connection update and clear on sign-out, explicit removal or restart. They are not returned by status APIs or stored in browser storage, environment settings, files or SQLite checkpoints. Hosted calls never fall back to owner keys. The login cookie contains only a signed session identifier. Local single-user environment credentials remain separate. `.env.example` documents variables; the server does not automatically load `.env` files.
 
 | Capability | Connection | Without a key |
 | --- | --- | --- |
@@ -42,7 +42,7 @@ Open **Connections** and enter credentials there, not in chat. Entered keys stay
 | Additional official-source discovery | Separate Tavily key | Direct public collectors still work; search reports not configured |
 | Jev authority routing | Separate TypeSafe key, `jev-latest` or available account model | Case saved for manual officer triage; no invented choice |
 
-Provider calls can incur charges. Jev receives the briefing and saved public evidence; the selected LLM provider receives the decision question, evidence excerpts and tool results; Tavily receives search queries. No live paid-model call has been verified without user-supplied credentials. Automated tests mock these calls and do not establish model accuracy.
+Provider calls can incur charges. Jev receives the briefing and saved public evidence; the selected LLM provider receives the decision question, evidence excerpts and tool results; Tavily receives search queries. No live paid-model call has been verified without user-supplied credentials. Session-isolation tests verify that two browsers use only their own keys, including across background jobs and parallel specialists; checkpoint files are checked for credential leakage. Automated tests mock these calls and do not establish model accuracy.
 
 Jev is one optional decision component alongside five LLM roles, not a sixth autonomous release authority. Its two Choice questions select a desk and a next review step. A pilot confidence threshold of 0.85 determines whether a routing recommendation is presented as sufficiently decisive; lower confidence requires human triage. The threshold is not domain-calibrated. Confidence summarizes the choice distribution, not measured correctness. The API validates labels, distributions and the documented confidence statistic. No actuation, approval or messaging tools are exposed. Jev does not replace water-balance calculations, engineering judgment or officer approval.
 

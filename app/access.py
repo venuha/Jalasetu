@@ -1,4 +1,5 @@
 """Shared management sign-in for a hosted pilot, with signed expiring browser sessions."""
+import asyncio
 import base64
 import binascii
 import hashlib
@@ -34,7 +35,18 @@ async def lifespan(app):
     validate_hosting()
     from .research_jobs import recover
     recover()
-    yield
+    from . import connections
+    async def expire_keys():
+        while True:
+            await asyncio.sleep(60)
+            connections.sweep_expired()
+    sweeper=asyncio.create_task(expire_keys())
+    try:yield
+    finally:
+        sweeper.cancel()
+        try:await sweeper
+        except asyncio.CancelledError:pass
+        connections.clear_all_sessions()
 
 def cookie_name():return '__Host-jalasetu_session' if hosted() else 'jalasetu_session'
 
@@ -92,6 +104,9 @@ async def login(request):
     except (ValueError,UnicodeDecodeError):return JSONResponse({'detail':'Invalid sign-in request.'},status_code=400)
     if not credentials_match(value['username'],value['password']):return JSONResponse({'detail':'Incorrect username or password.'},status_code=401)
     ATTEMPTS.pop(address,None)
+    from . import connections
+    old=request.cookies.get(cookie_name())
+    if valid_session(old):connections.clear_session(old)
     response=JSONResponse({'ok':True})
     response.set_cookie(cookie_name(),signed_session(),max_age=SESSION_SECONDS,httponly=True,secure=hosted(),samesite='strict',path='/')
     return response
@@ -106,6 +121,9 @@ async def protect(request,call_next):
     if request.url.path=='/auth/login' and request.method=='POST':return secured(await login(request))
     if request.url.path=='/auth/logout' and request.method=='POST':
         if not same_origin(request):return secured(JSONResponse({'detail':'Cross-site sign-out is not allowed.'},status_code=403))
+        from . import connections
+        old=request.cookies.get(cookie_name())
+        if valid_session(old):connections.clear_session(old)
         response=JSONResponse({'ok':True});response.delete_cookie(cookie_name(),path='/',secure=hosted(),httponly=True,samesite='strict')
         return secured(response)
     if expected:
@@ -119,4 +137,9 @@ async def protect(request,call_next):
             except (ValueError,UnicodeDecodeError,binascii.Error):valid=False
         if not valid:
             return secured(JSONResponse({'detail':'Management sign-in required.'},status_code=401) if request.url.path.startswith('/api/') else RedirectResponse('/login',status_code=303))
-    return secured(await call_next(request))
+    from . import connections
+    token=request.cookies.get(cookie_name())
+    binding=connections.bind_session(token) if valid_session(token) else None
+    try:return secured(await call_next(request))
+    finally:
+        if binding is not None:connections.CURRENT_SCOPE.reset(binding)

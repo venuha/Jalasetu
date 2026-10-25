@@ -1,6 +1,6 @@
 """Bounded single-process research jobs so hosted HTTP requests need not wait on models."""
 from concurrent.futures import ThreadPoolExecutor
-import json
+import contextvars
 import uuid
 from . import store,research_panel
 
@@ -33,7 +33,8 @@ def submit(request):
         count=c.execute("SELECT COUNT(*) FROM research_jobs WHERE status IN ('queued','running')").fetchone()[0]
         if count>=3:raise ValueError('Research queue is full. Wait for an existing panel to finish.')
         c.execute('INSERT INTO research_jobs VALUES(?,?,?)',(run_id,'queued',''))
-    POOL.submit(work,run_id,request.model_dump())
+    context=contextvars.copy_context()
+    POOL.submit(context.run,work,run_id,request.model_dump())
     return dict(id=run_id,state=dict(status='queued'),waiting_for_review=False,roles=5,job_active=True)
 
 def read(run_id):

@@ -12,6 +12,9 @@ from . import public_data,research_panel,research_jobs,connections,authority
 from pydantic import Field
 from .models import StrictModel
 from .access import lifespan,protect,hosted,deployment_status
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.responses import JSONResponse
 
 class EvidenceRequest(StrictModel):
     latitude:float=Field(default=16.08,ge=15,le=20)
@@ -23,6 +26,12 @@ class SearchRequest(StrictModel):
 
 app=FastAPI(title='JalaSetu • Water operations',description='Planning prototype. No physical control or authenticated official approvals.',lifespan=lifespan)
 app.middleware('http')(protect)
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(request,exc):
+    if request.url.path=='/api/connections':
+        return JSONResponse(status_code=422,content={'detail':[{k:v for k,v in item.items() if k in ['loc','msg','type']} for item in exc.errors()]})
+    return await request_validation_exception_handler(request,exc)
 
 @app.get('/api/authority')
 def authority_overview():return authority.overview()
@@ -48,7 +57,6 @@ def connection_status():return connections.status()
 
 @app.post('/api/connections')
 def connection_update(item:connections.ConnectionUpdate):
-    if hosted():raise HTTPException(403,'Hosted connections are managed in the hosting provider environment settings.')
     try:return connections.update(item)
     except ValueError as e:raise HTTPException(422,str(e))
 
