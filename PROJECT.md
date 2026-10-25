@@ -1,5 +1,7 @@
 # JalaSetu project framework
 
+**Live application:** [JalaSetu on Render](https://jalasetu-q7sg.onrender.com/) · [Sign in](https://jalasetu-q7sg.onrender.com/login)
+
 JalaSetu supports water operations teams, resource planners, power coordinators and management. Farmers and village communities are beneficiaries of authority-issued schedules and advisories, without logging in. The prototype connects public evidence, departmental coordination, scenario analysis, human reviews and delivery oversight.
 
 ## Architecture

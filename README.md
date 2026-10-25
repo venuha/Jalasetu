@@ -1,5 +1,9 @@
 # JalaSetu — Water Authority Console
 
+**Live app: [Open JalaSetu on Render](https://jalasetu-q7sg.onrender.com/)** · [Management sign-in](https://jalasetu-q7sg.onrender.com/login)
+
+The deployed app requires the management credentials configured privately in Render. Provider keys are optional and entered separately in Connections. The Free sandbox can take a minute to wake up and uses temporary data storage.
+
 An authority-operated React/Python decision-support prototype for water operations teams, resource planners, power coordinators and management oversight. Farmers and village communities receive the outcomes; there is no farmer login or farmer-operated portal.
 
 ## Run locally

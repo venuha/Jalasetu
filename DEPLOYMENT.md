@@ -1,5 +1,14 @@
 # Render deployment: protected free sandbox
 
+## Current deployed application
+
+- **Live app:** [JalaSetu](https://jalasetu-q7sg.onrender.com/)
+- **Sign-in:** [Management workspace](https://jalasetu-q7sg.onrender.com/login)
+- **Health check:** [Service health](https://jalasetu-q7sg.onrender.com/api/health)
+- **Hosting:** Render Free sandbox with ephemeral SQLite storage. The service can sleep when idle; saved data can reset on restart or redeployment.
+
+Management credentials remain private in Render Environment. Connect personal model keys in the app's Connections screen; do not add them to this repository.
+
 Deploy the existing GitHub repository with its root `render.yaml` Blueprint. The Blueprint uses a single Free Python web service, temporary local cloud storage and a generated management password. No paid disk is attached. Render may sleep the service when idle; requests can have a cold start. It disables automatic deploy-on-commit so future code updates are deployed deliberately.
 
 ## Runtime contract
