@@ -42,3 +42,10 @@ def test_hosted_database_and_worker_contract(hosted,monkeypatch):
     monkeypatch.setenv('JALASETU_DB','/var/data/jalasetu.sqlite3')
     monkeypatch.setenv('WEB_CONCURRENCY','2')
     with pytest.raises(RuntimeError,match='one worker'):validate_hosting()
+
+
+def test_ephemeral_sandbox_is_explicit_in_dashboard(hosted,monkeypatch):
+    monkeypatch.setenv('JALASETU_STORAGE_MODE','ephemeral')
+    with TestClient(app) as client:
+        result=client.get('/api/dashboard',auth=hosted).json()
+        assert result['deployment']=={'hosted':True,'storage_mode':'ephemeral'}

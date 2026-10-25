@@ -1,19 +1,15 @@
-# Paid service and disk: review Render's current price before creating the service.
+# Free sandbox: saved cloud records are temporary and may reset on restart/redeploy.
 services:
   - type: web
     name: jalasetu
     runtime: python
-    plan: starter
+    plan: free
     repo: https://github.com/venuha/Jalasetu
     branch: main
     buildCommand: pip install -r requirements.txt
     startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     healthCheckPath: /api/health
     autoDeployTrigger: 'off'
-    disk:
-      name: jalasetu-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.12
@@ -22,7 +18,9 @@ services:
       - key: JALASETU_DEPLOYED
         value: 'true'
       - key: JALASETU_DB
-        value: /var/data/jalasetu.sqlite3
+        value: /tmp/jalasetu/jalasetu.sqlite3
+      - key: JALASETU_STORAGE_MODE
+        value: ephemeral
       - key: JALASETU_ACCESS_USER
         value: management
       - key: JALASETU_ACCESS_PASSWORD

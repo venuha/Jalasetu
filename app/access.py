@@ -9,6 +9,9 @@ from starlette.responses import JSONResponse
 
 def hosted():return os.getenv('JALASETU_DEPLOYED','').lower() in {'1','true'}
 
+def deployment_status():
+    return dict(hosted=hosted(),storage_mode=os.getenv('JALASETU_STORAGE_MODE','persistent') if hosted() else 'local')
+
 def validate_hosting():
     password=os.getenv('JALASETU_ACCESS_PASSWORD','')
     if hosted():

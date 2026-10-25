@@ -11,7 +11,7 @@ from .farmer import FarmBudget,farm_budget,PowerEvent,ReleaseEvent,power_event,r
 from . import public_data,research_panel,research_jobs,connections,authority
 from pydantic import Field
 from .models import StrictModel
-from .access import lifespan,protect,hosted
+from .access import lifespan,protect,hosted,deployment_status
 
 class EvidenceRequest(StrictModel):
     latitude:float=Field(default=16.08,ge=15,le=20)
@@ -132,7 +132,7 @@ def health():return {'ok':True,'mode':'synthetic_demo'}
 def dashboard():
     data=store.dataset();booked=store.bookings()
     rs=[dict(**r,**available(r,booked.get(r['id'],0))) for r in data['reservoirs']]
-    return dict(dataset=data,reservoirs=rs,plans=store.plans(),
+    return dict(dataset=data,reservoirs=rs,plans=store.plans(),deployment=deployment_status(),
         model_configured=connections.status()['llm_configured'])
 
 @app.post('/api/plans')

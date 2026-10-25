@@ -18,7 +18,7 @@ The interface uses location-neutral operations and management language. Connecte
 
 ## Render hosting
 
-A protected single-process pilot can be deployed from the included `render.yaml`. It uses a paid persistent disk, generated management access and background research jobs. Hosted provider secrets are managed in Render, not the browser. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, costs to review, access and verification. This does not add per-user official authorization.
+A protected single-process free sandbox can be deployed from the included `render.yaml`. It uses temporary cloud storage, generated management access and background research jobs. Saved cloud cases and reviews may reset when the service restarts or redeploys; the interface displays this limitation. Hosted provider secrets are managed in Render, not the browser. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, costs to review, access and verification. This does not add per-user official authorization.
 
 ## Authority workflow
 
