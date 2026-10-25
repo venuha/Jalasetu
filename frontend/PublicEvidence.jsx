@@ -3,7 +3,7 @@ const f=(n,d=2)=>Number(n??0).toLocaleString('en-IN',{maximumFractionDigits:d});
 async function api(u,b){const r=await fetch(u,b===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const d=await r.json();if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:JSON.stringify(d.detail));return d;}
 function download(data,name){const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 export function PublicEvidence({notify,openPanel,openConnections}){
- const [report,setReport]=useState(null),[busy,setBusy]=useState(false),[query,setQuery]=useState('Telangana Srisailam Nagarjuna Sagar irrigation release drinking water latest official'),[search,setSearch]=useState(null);
+ const [report,setReport]=useState(null),[busy,setBusy]=useState(false),[query,setQuery]=useState('reservoir storage irrigation releases drinking water latest official reports'),[search,setSearch]=useState(null);
  const refresh=async()=>{setBusy(true);try{setReport(await api('/api/public-evidence/refresh',{}))}catch(e){notify(e.message)}finally{setBusy(false)}};
  useEffect(()=>{api('/api/public-evidence').then(r=>{if(r)setReport(r);else refresh()}).catch(e=>notify(e.message))},[]);
  const official=report?.observations.filter(o=>o.source_type==='official')||[],secondary=report?.observations.filter(o=>o.source_type!=='official')||[];
@@ -18,7 +18,7 @@ export function Connections({notify,reload}){
 }
 function AnalysisCard({title,result}){return <section className="panel"><h2>{title}</h2>{!result?<p className="muted">Not run</p>:result.status!=='model_completed'?<div className="info">{result.status}: {result.message}</div>:<><p className="sub">{result.analysis.summary}</p><ul className="recommendations">{result.analysis.findings.map((x,i)=><li key={i}>{x.statement}<small className="muted"> [{x.evidence_ids.join(', ')}]</small></li>)}</ul><div className="info">{result.analysis.recommendation}</div><p className="muted">Missing inputs: {result.analysis.missing_inputs.join('; ')||'None stated by model; deterministic guards still apply.'}</p></>}</section>}
 export function ResearchPanel({notify,openConnections}){
- const [question,setQuestion]=useState('What do the latest public reports establish about Srisailam and Nagarjuna Sagar water stress, and what additional evidence is needed before recommending crop-rescue releases and reliable pumping windows?'),[run,setRun]=useState(null),[busy,setBusy]=useState(false);
+ const [question,setQuestion]=useState('What do the latest connected public reports establish about water availability, and what additional evidence is needed before recommending irrigation releases and reliable pumping windows?'),[run,setRun]=useState(null),[busy,setBusy]=useState(false);
  useEffect(()=>{const id=localStorage.getItem('jalasetu-panel-run');if(id)api('/api/research-panel/runs/'+id).then(setRun).catch(()=>{})},[]);
  const start=async e=>{e.preventDefault();setBusy(true);try{const r=await api('/api/research-panel/runs',{question});setRun(r);localStorage.setItem('jalasetu-panel-run',r.id)}catch(e){notify(e.message)}finally{setBusy(false)}};
  const s=run?.state;

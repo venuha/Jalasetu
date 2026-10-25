@@ -1,12 +1,12 @@
 # JalaSetu project framework
 
-JalaSetu supports irrigation authorities, reservoir operators, power coordinators and ministry officials. Farmers and village communities are beneficiaries of authority-issued schedules and advisories, without logging in. The prototype connects public evidence, departmental coordination, scenario analysis, human reviews and delivery oversight.
+JalaSetu supports water operations teams, resource planners, power coordinators and management. Farmers and village communities are beneficiaries of authority-issued schedules and advisories, without logging in. The prototype connects public evidence, departmental coordination, scenario analysis, human reviews and delivery oversight.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    UI[Authority and ministry console] --> Public[Read-only public-source retrieval]
+    UI[Operations and management console] --> Public[Read-only public-source retrieval]
     UI --> Case[Officer case briefing]
     Public --> Ledger[Dated evidence ledger with source failures]
     Ledger --> Jev[Jev: coordination desk and next-step recommendation]
@@ -36,7 +36,7 @@ The academy's deal-review example provides useful patterns: tool use, parallel s
 
 | User | Decision support |
 | --- | --- |
-| Ministry oversight | Reservoir evidence coverage, unresolved cases, missing operational data and scenario review status |
+| Management oversight | Reservoir evidence coverage, unresolved cases, missing operational data and scenario review status |
 | Reservoir operations | Dated levels/storage definitions, protected-pool scenarios and release ledgers |
 | Irrigation planning | Command demand, crop stage, rain-adjusted supplemental needs, canal constraints and shortfalls |
 | Power coordination | Lift energy and hours, utility confirmation gaps, outages and replan advisories |
@@ -53,6 +53,6 @@ A separate TypeSafe key enables Jev's narrow authority-routing judgments. OpenAI
 
 ## Validation and limits
 
-Tests cover water conservation, protected reserves, energy/deadline constraints, stale/changed evidence, independent reviews, competing reservations, delivery validation, rain/feeder event handling, durable graph review, provider failure visibility, PDF measurement definitions, Jev response validation, manual triage and beneficiary previews. Paid-provider calls are mocked in tests; real model accuracy, Telugu routing, cost and latency need a labelled domain evaluation.
+Tests cover water conservation, protected reserves, energy/deadline constraints, stale/changed evidence, independent reviews, competing reservations, delivery validation, rain/feeder event handling, durable graph review, provider failure visibility, PDF measurement definitions, Jev response validation, manual triage and beneficiary previews. Paid-provider calls are mocked in tests; real model accuracy, multilingual routing, cost and latency need a labelled domain evaluation.
 
 Operating parameters remain explicitly synthetic because public report rows alone do not establish command connectivity, protected reserves, legal availability, shared canal limits or feeder commitments. Real public evidence is displayed separately. The application supports investigation and review; it does not authorize or actuate a real release.

@@ -119,7 +119,7 @@ def overview():
     items=cases();plans=store.plans()
     return dict(cases=items,counts=dict(open_cases=len(items),pending_reviews=sum(p['status']=='awaiting_approvals' for p in plans),
         approved_simulations=sum(p['status'] in ['approved_simulation','delivery_recorded'] for p in plans)),
-        policy=dict(primary_users=['Irrigation department','Reservoir operators','Power coordination desk','Ministry oversight'],
+        policy=dict(primary_users=['Irrigation department','Reservoir operators','Power coordination desk','Management oversight'],
             beneficiaries='Farmers and village communities receive authority-issued schedules and advisories; no farmer login.',
             routing_threshold=THRESHOLD,threshold_note='Pilot setting; local evaluation is required. Confidence is not measured correctness.'),
         routes=ROUTES,steps=STEPS)

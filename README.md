@@ -1,6 +1,6 @@
 # JalaSetu — Water Authority Console
 
-An authority-operated React/Python decision-support prototype for Telangana irrigation departments, reservoir operators, power coordinators and ministry oversight. Farmers and village communities receive the outcomes; there is no farmer login or farmer-operated portal.
+An authority-operated React/Python decision-support prototype for water operations teams, resource planners, power coordinators and management oversight. Farmers and village communities receive the outcomes; there is no farmer login or farmer-operated portal.
 
 ## Run locally
 
@@ -13,6 +13,8 @@ python3.12 -m venv .venv
 ```
 
 Open http://127.0.0.1:8092. `Launch JalaSetu.command` can use this computer's existing Agentic System Python environment. Bind to loopback: this is a single-user prototype, without authenticated officials or production authorization.
+
+The interface uses location-neutral operations and management language. Connected source records retain their actual asset names and provenance so real observations are not misrepresented as generic measurements.
 
 ## Authority workflow
 
@@ -57,7 +59,7 @@ Protected pool = max(operating floor, hydro hold) + drinking reserve + environme
 
 Approved simulations reserve water against their snapshot and block dataset replacement until a production reconciliation process exists. Rain/power events invalidate pending proposal evidence; an outage creates a replan advisory, not a gate command. Feeder observations expire after ten minutes; rain credits expire after 24 hours. Village-wide rain coverage is an explicit demo assumption. Separate two-acre budgets never silently change a whole village's demand.
 
-The Kaleshwaram schematic distinguishes sourced historical design, a hypothetical single-package lift calculator and unknown current safe operating capacity. See `research/KALESHWARAM_AND_FARMER_RULES.md`.
+The reference lift-network schematic distinguishes sourced historical design, a hypothetical single-package lift calculator and unknown current safe operating capacity. See `research/KALESHWARAM_AND_FARMER_RULES.md`.
 
 ## Editing and validation
 
