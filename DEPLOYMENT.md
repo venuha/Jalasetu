@@ -8,7 +8,7 @@ Deploy the existing GitHub repository with its root `render.yaml` Blueprint. The
 - Uvicorn listens on `0.0.0.0:$PORT`, one worker. `/api/health` is a public minimal health check; the app, API, documentation and assets require management access.
 - `JALASETU_DB=/tmp/jalasetu/jalasetu.sqlite3` and `JALASETU_STORAGE_MODE=ephemeral`. The main database and both LangGraph checkpoint databases share a temporary directory. Saved cloud records may reset on restart or redeploy. Runtime data and Desktop records are excluded from GitHub; cloud starts fresh.
 - `JALASETU_DEPLOYED=true` makes startup fail unless an absolute database path, management username, password of at least 20 characters and a single worker are configured.
-- `JALASETU_ACCESS_USER=management`. Render generates `JALASETU_ACCESS_PASSWORD`; retrieve it yourself from the service's Environment settings. The browser prompts for these credentials. HTTPS is supplied by Render. Do not paste the password in chat or commit it.
+- `JALASETU_ACCESS_USER=management`. Render generates `JALASETU_ACCESS_PASSWORD`; retrieve it yourself from the service's Environment settings. The app displays a management sign-in page. A successful login sets an eight-hour, HttpOnly, Secure, SameSite=Strict signed session cookie; the password is never stored in the browser. HTTPS is supplied by Render. Do not paste the password in chat or commit it.
 - This is one shared management sign-in for a pilot. It is not per-user identity, official role authorization, a signed legal release system or a public multi-tenant service. Share access only with intended reviewers.
 
 ## Optional model and discovery connections
@@ -31,7 +31,7 @@ The UI submits a background job and polls its status. The free sandbox can lose 
 
 ## After deployment
 
-Verify Render reports Live, `/api/health` returns 200 and a request without credentials to `/api/dashboard` returns 401. Sign in through the browser with the generated management credential and check the overview. Refresh public evidence and inspect failures/dates. Configure optional model keys to verify Jev and the LLM panel. Source availability can differ from local access; failed sources remain visible.
+Verify Render reports Live, `/api/health` returns 200 and a request without credentials to `/api/dashboard` returns 401 and `/` redirects to the sign-in page. Sign in through the browser with the generated management credential and check the overview. Refresh public evidence and inspect failures/dates. Configure optional model keys to verify Jev and the LLM panel. Source availability can differ from local access; failed sources remain visible.
 
 For durable records later, explicitly upgrade to a paid instance, attach a persistent disk, set JALASETU_DB to a path under its mount point and set JALASETU_STORAGE_MODE=persistent. Do not represent this free sandbox as durable storage. Export important demo packets before a restart. For production adoption, add government/organization SSO, per-user authorization, reconciled telemetry, independent backup/restore procedures, model evaluations and a durable external job/database architecture.
 
