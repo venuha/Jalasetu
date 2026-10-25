@@ -8,8 +8,68 @@ from .integrations import weather,enrich
 from .network import network,lift_capacity,LiftScenario
 from .supervisor import Mission,MissionReview,start,operate
 from .farmer import FarmBudget,farm_budget,PowerEvent,ReleaseEvent,power_event,release_event,monitoring,RainEvent,rain_event,operational_constraints
+from . import public_data,research_panel,connections,authority
+from pydantic import Field
+from .models import StrictModel
+
+class EvidenceRequest(StrictModel):
+    latitude:float=Field(default=16.08,ge=15,le=20)
+    longitude:float=Field(default=78.90,ge=77,le=82)
+    include_secondary:bool=True
+
+class SearchRequest(StrictModel):
+    query:str=Field(min_length=5,max_length=500)
 
 app=FastAPI(title='JalaSetu • Water to field',description='Local simulation. No operational control or authenticated official approvals.')
+
+@app.get('/api/authority')
+def authority_overview():return authority.overview()
+
+@app.post('/api/authority/cases')
+def authority_create(item:authority.CaseRequest):return authority.create(item)
+
+@app.post('/api/authority/cases/{case_id}/assess')
+def authority_assess(case_id:str):
+    try:return authority.assess(case_id)
+    except ValueError as e:raise HTTPException(404,str(e))
+
+@app.get('/api/authority/beneficiary-previews')
+def beneficiary_previews():return authority.beneficiary_previews()
+
+@app.post('/api/authority/cases/{case_id}/review')
+def authority_case_review(case_id:str,item:authority.CaseReview):
+    try:return authority.review(case_id,item)
+    except ValueError as e:raise HTTPException(404,str(e))
+
+@app.get('/api/connections')
+def connection_status():return connections.status()
+
+@app.post('/api/connections')
+def connection_update(item:connections.ConnectionUpdate):
+    try:return connections.update(item)
+    except ValueError as e:raise HTTPException(422,str(e))
+
+@app.get('/api/public-evidence')
+def public_latest():return public_data.latest()
+
+@app.post('/api/public-evidence/refresh')
+def public_refresh(item:EvidenceRequest):return public_data.refresh(item.latitude,item.longitude,item.include_secondary)
+
+@app.post('/api/public-search')
+def public_search(item:SearchRequest):return public_data.search_public(item.query)
+
+@app.post('/api/research-panel/runs')
+def research_start(item:research_panel.PanelRequest):return research_panel.start(item)
+
+@app.get('/api/research-panel/runs/{run_id}')
+def research_read(run_id:str):
+    try:return research_panel.operate(run_id)
+    except ValueError as e:raise HTTPException(404,str(e))
+
+@app.post('/api/research-panel/runs/{run_id}/review')
+def research_review(run_id:str,item:research_panel.Review):
+    try:return research_panel.operate(run_id,review=item.model_dump())
+    except ValueError as e:raise HTTPException(409,str(e))
 
 @app.get('/api/network')
 def get_network():return network()
@@ -60,7 +120,7 @@ def dashboard():
     data=store.dataset();booked=store.bookings()
     rs=[dict(**r,**available(r,booked.get(r['id'],0))) for r in data['reservoirs']]
     return dict(dataset=data,reservoirs=rs,plans=store.plans(),
-        model_configured=all(__import__('os').getenv(k) for k in ['JALASETU_LLM_BASE_URL','JALASETU_LLM_API_KEY','JALASETU_LLM_MODEL']))
+        model_configured=connections.status()['llm_configured'])
 
 @app.post('/api/plans')
 def create_plan(scenario:Scenario):

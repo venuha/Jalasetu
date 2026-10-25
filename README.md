@@ -1,10 +1,10 @@
-# JalaSetu
+# JalaSetu — Water Authority Console
 
-Water to field: a React and Python planning prototype connecting reservoir availability, village crop demand, pumping power, separate human reviews and delivery observations.
+An authority-operated React/Python decision-support prototype for Telangana irrigation departments, reservoir operators, power coordinators and ministry oversight. Farmers and village communities receive the outcomes; there is no farmer login or farmer-operated portal.
 
 ## Run locally
 
-The production React bundle is included. Node is needed only when editing the frontend.
+The compiled React bundle is included; Node is needed only to edit the frontend.
 
 ```bash
 python3.12 -m venv .venv
@@ -12,78 +12,63 @@ python3.12 -m venv .venv
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8092
 ```
 
-Open http://127.0.0.1:8092. On this computer, `Launch JalaSetu.command` can also use the existing Agentic System Python environment. The service binds only to loopback. This is a single-user demo, not a shared authenticated government portal.
+Open http://127.0.0.1:8092. `Launch JalaSetu.command` can use this computer's existing Agentic System Python environment. Bind to loopback: this is a single-user prototype, without authenticated officials or production authorization.
 
-## Included
+## Authority workflow
 
-- Independent marine-blue React interface: ice-blue canvas, white navigation, modern sans-serif typography, water illustrations and a persistent agent workflow strip grounded in saved checkpoint state.
-- Animated dam-to-tank landscape and interactive Kaleshwaram reverse-lift schematic, with keyboard-accessible nodes and reduced-motion support.
-- Single-package Kaleshwaram lift-capacity calculator separating historical design, hypothetical power/flow envelopes, and unverified current availability.
-- Durable LangGraph supervisor with conditional tool selection, bounded power alternatives, SQLite checkpoints and a real human interrupt that resumes across restarts.
-- Two-acre farm water budget, verified-rain zero-demand rule, forecast-review gate, village rain events and feeder events connected to the planner.
-- Farmer power-window updates, sudden-outage escalation and excess-release monitoring with event deduplication and in-app alerts.
-- Eight example reservoir records and sixteen explicitly fictional villages. All operational values and routes are synthetic, not current readings.
-- Total, protected, committed and proposable water shown separately for each source.
-- Village search, crop stage, area, source route, lift head and delivery deadline.
-- Water demand with soil/rainfall credits and delivery efficiency; drinking-water and environmental reserves retained.
-- Lift energy, power capacity, per-day pump windows, canal capacity and travel-time constraints.
-- Crop-stage priority and proportional allocation within each tier; insights about rescue irrigation and deferring expansion of new planting.
-- Power-window comparison; stale-data, unavailable-weather and power-outage demonstrations.
-- LangGraph calculation workflow; persistent SQLite proposal, review, reservation and delivery state.
-- Separate water and power reviews, rejection, recalculation, data-hash checks, stale-evidence checks, and transactional prevention of double-booked water.
-- Delivery observations and shortfall prompts, immutable-by-API history, downloadable evidence packets and validated demo dataset import/export.
-- Live Open-Meteo weather adapter with timeout, retry and explicit fallback. Successful live access depends on network availability; forecast previews never silently change crop demand.
-- Optional OpenAI-compatible model explanation with deterministic fallback. No model key is required to demonstrate the planning workflow.
+1. **Authority overview:** selected-reservoir evidence, report dates, missing observations, coordination cases and scenario review counts. Unknown operating release availability stays unknown.
+2. **Public evidence:** fetch dated CEA/National Power Portal hydro and generation PDFs, KRMB when reachable, an explicitly secondary reservoir dashboard and Open-Meteo forecasts. Failures stay visible; no synthetic readings replace unavailable public observations. Optional Tavily search discovers additional official-source leads.
+3. **Authority case routing:** register an officer briefing. Jev recommends a responsible desk and next investigation step. Inspect option probabilities and model confidence; an officer confirms or overrides the assignment. Assignment does not approve a release or send a message.
+4. **AI research panel:** an LLM researcher can select read-only search, forecast and scenario tools; three LLM specialists review water, command-area demand and energy in parallel; an LLM coordinator synthesizes cited findings. Independent checks preserve missing-data and operating-readiness limits. SQLite LangGraph checkpoints pause for human analysis review.
+5. **Scenario planning:** separately labelled synthetic operating inputs demonstrate protected water pools, crop-stage priorities, canal limits, pump energy, daily power windows and delivery deadlines. Public report metrics are not silently substituted into incompatible planning fields.
+6. **Review and delivery:** separate demo water and power reviews, freshness/hash validation, reservation checks and delivery observations.
+7. **Field and feeder monitoring:** an officer evaluates supplemental field-water requirements, records demo rain/feeder events and checks excess-release observations. Outage and stale-reading alerts are in-app only.
+8. **Beneficiary notices:** read-only village notice previews from simulations that passed both reviews. They never promise firm electricity from calculated pump-hours. No external messaging service is connected.
 
-## Demo walkthrough
+## Models and credentials
 
-1. Open Water overview: inspect protected reserves and village coverage. Note the synthetic-data banner.
-2. Open Scenario planner and compare power windows. More electricity cannot unlock water protected for drinking or overcome a canal bottleneck.
-3. Run a planning scenario. Inspect the evidence trail, source ledger, village allocations and daily pump windows.
-4. Enter a demo water review and a separate demo power review. The result is a **simulated order**, not an external operation.
-5. Record a partial source-equivalent delivery. Inspect the shortfall insight and audit history.
-6. Create another scenario with `stale reservoir`: it pauses without approval controls. Try `power outage`: lifts stop but feasible gravity routes continue. `weather unavailable` produces an explicit manual-input fallback.
-7. Refresh the page: saved proposals and reviews remain in SQLite.
+Open **Connections** and enter credentials there, not in chat. Entered keys stay in server process memory; they are not returned by status APIs, put in browser storage or saved in SQLite checkpoints. Restart clears entered keys. Server environment credentials remain until removed from the environment. `.env.example` documents variables; the server does not automatically load `.env` files.
 
-## Editing and tests
+| Capability | Connection | Without a key |
+| --- | --- | --- |
+| Public-source retrieval and arithmetic | No model key | Available, subject to network/source access |
+| Five LLM research roles | OpenAI Responses or supported compatible provider; exact model ID with tools and structured output | Explicit `credentials_required`; no pretend model execution |
+| Additional official-source discovery | Separate Tavily key | Direct public collectors still work; search reports not configured |
+| Jev authority routing | Separate TypeSafe key, `jev-latest` or available account model | Case saved for manual officer triage; no invented choice |
+
+Provider calls can incur charges. Jev receives the briefing and saved public evidence; the selected LLM provider receives the decision question, evidence excerpts and tool results; Tavily receives search queries. No live paid-model call has been verified without user-supplied credentials. Automated tests mock these calls and do not establish model accuracy.
+
+Jev is one optional decision component alongside five LLM roles, not a sixth autonomous release authority. Its two Choice questions select a desk and a next review step. A pilot confidence threshold of 0.85 determines whether a routing recommendation is presented as sufficiently decisive; lower confidence requires human triage. The threshold is not domain-calibrated. Confidence summarizes the choice distribution, not measured correctness. The API validates labels, distributions and the documented confidence statistic. No actuation, approval or messaging tools are exposed. Jev does not replace water-balance calculations, engineering judgment or officer approval.
+
+## Evidence boundaries
+
+- CEA **effective hydro capacity at present level (MCM)** is not gross reservoir storage or authorized irrigation availability. **MU** is generated electrical energy; **MW** is power. State generation cannot establish a village feeder commitment.
+- Retrieval time does not refresh an old reading. Observation dates, provenance, PDF page and measurement definitions are retained. Source schema changes fail visibly.
+- KRMB can time out. IMD's tested endpoint requires authentication; it is shown unavailable when no access is established. Public websites are not necessarily documented public APIs. TLS checks are never bypassed.
+- The independent reservoir dashboard is labelled secondary and requires corroboration. Search excerpts are discovery leads, not verified operating observations.
+- Forecast rain is not measured effective field rain. Forecast-only advice is a review prompt; critical stress and flowering prevent generic deferral. Verified effective rain can reduce a supplemental application deficit to zero.
+- There is no complete statewide village inventory, verified command connectivity, legal allocation engine, authenticated official identity, live dam engineering clearance, SCADA control or utility dispatch integration.
+
+## Calculation sandbox
+
+Eight named reservoir fixtures and sixteen fictional villages demonstrate calculations. All operating storage, reserve, route and village values remain synthetic, including fixtures resembling historical readings. A seed timestamp describes demo generation only. The default database is `data/jalasetu.sqlite3`; set `JALASETU_DB` for an independent environment.
+
+Protected pool = max(operating floor, hydro hold) + drinking reserve + environmental reserve + other commitments. Components must be non-overlapping. Source volume = area ha × net depth mm × 10 / delivery efficiency. Lift energy follows ρgVH / efficiency. Allocation is crop-stage priority, proportional within a tier, bounded by source water, independent route capacity, power and delivery deadline. Hydro generation, basin-wide cascades, shared feeder concurrency and full-season crop demand are not modelled. Do not sum connected cascade storage as independently deliverable water.
+
+Approved simulations reserve water against their snapshot and block dataset replacement until a production reconciliation process exists. Rain/power events invalidate pending proposal evidence; an outage creates a replan advisory, not a gate command. Feeder observations expire after ten minutes; rain credits expire after 24 hours. Village-wide rain coverage is an explicit demo assumption. Separate two-acre budgets never silently change a whole village's demand.
+
+The Kaleshwaram schematic distinguishes sourced historical design, a hypothetical single-package lift calculator and unknown current safe operating capacity. See `research/KALESHWARAM_AND_FARMER_RULES.md`.
+
+## Editing and validation
 
 ```bash
-# React frontend (pnpm or npm)
 npm install
 npm run build
-
-# Python verification
 .venv/bin/python -m pytest tests -q
 ```
 
-`pnpm-lock.yaml` records the installed frontend dependency versions. Python requires 3.12 or newer; the implementation was tested using the existing 3.12 workspace runtime. Backend dependencies are bounded in requirements.txt. Node 24 was used for the included React build.
+Python 3.12+, Node 24 for the included bundle; `pnpm-lock.yaml` records frontend dependencies. SQLite retains cases, public snapshots, plans, reviews and deliveries; separate checkpoint databases retain scenario supervisor and research panel runs. They are excluded from GitHub and release archives along with credentials, virtual environments and dependencies.
 
-The database defaults to `data/jalasetu.sqlite3`; set `JALASETU_DB` for an independent demo database. Freshness is checked against the observation timestamp (48-hour limit). Sample timestamps are created once when a new database is initialized. If they expire, use a new demo database or upload a freshly generated demo dataset before approving; never relabel an old real observation as fresh.
+The original deterministic scenario supervisor remains available as **Scenario workflow**. Its tool choices are rule-based. The separate **AI research panel** performs actual LLM tool selection when configured. Neither is represented as a trained hydrological predictor.
 
-## Optional model connection
-
-Export `JALASETU_LLM_BASE_URL` (an OpenAI-compatible API base ending in `/v1` where required), `JALASETU_LLM_API_KEY`, and `JALASETU_LLM_MODEL` in the server environment. `.env.example` describes these variables; the server does not automatically load `.env` files. Suitable provider accounts include OpenAI-compatible providers offered by the course, subject to their current access and model support.
-
-Only aggregate plan results and recommendation text are sent for explanation. Model responses are labelled review-required and do not alter calculations, approvals or orders. Missing credentials or an unavailable provider leaves deterministic insights operational. No live model call has been verified in this build.
-
-## Important model boundaries
-
-- The core planning workflow uses deterministic calculations with optional LLM explanation. The Agent command supervisor adds actual LangGraph SQLite checkpoints, conditional tool selection and a human analysis-review interrupt. It is not an autonomous hydrological forecasting model. Water and power approvals remain separate transactional API state transitions.
-- There is no Telangana-wide village inventory or live official reservoir feed. All eight readings, capacities, operating floors, reserves, routes and sixteen village records are demo inputs. Srisailam's fixture resembles a previously researched secondary reading but is still synthetic here.
-- Crop water depths are manually supplied supplemental irrigation inputs, not a full-season crop model or agronomic prescription. Drinking reserves are configured volumes, not population-based forecasts. Population is recorded but does not determine reserves in this version.
-- Operating floor and hydro hold overlap; their maximum is retained. Drinking, environmental and other commitments are added as distinct, non-overlapping volumes. Their definitions need engineering review in a real deployment.
-- Each reservoir is an independent pool with independent village routes. Shared canals, feeders, cascade transfers, upstream inflows, seepage, evaporation and legal allocations need explicit network and operating data before real use. Do not sum connected cascade volumes as independently deliverable water.
-- Power windows are relative day schedules starting at 00:00 IST. They show energy and capacity feasibility under input assumptions, not a negotiated dispatch. The model assumes independent pumps/outlets; it does not verify shared-grid capacity.
-- Hydro generation is not calculated. The configured hydro hold preserves a pool; releases used for downstream generation must be routed through a cascade model to avoid double counting.
-- Approvals are demo role selections, not authenticated officials. There are no gate, SCADA, DISCOM, messaging or official-order integrations.
-- Approved proposals reserve source water against this fixed snapshot, including after delivery observations, so the same water is not reused. Dataset replacement is blocked while approved reservations exist. Production requires measurement-based reconciliation and commitment lifecycle management.
-
-See `PROJECT.md` for the course framework and roadmap, and `research/` for the preceding sources and feasibility work.
-
-## Farmer event monitoring
-
-Farmer & alerts supports a two-acre application budget, forecast preview, explicit village effective-rain observation, utility-window simulation, feeder-outage simulation and flow/volume anomaly detection. In-app alerts are generated when events are ingested; there is no unattended sensor ingestion daemon or external notification provider. The screen refreshes every 15 seconds while open. Event IDs deduplicate retries; changed payloads with reused IDs and out-of-order observations are rejected. Feeder readings expire after ten minutes, and expired commitments display unknown rather than available. Rain observations are replacement effective depths for the current application, not cumulative readings to be added; village-wide spatial coverage is a demo assumption and credits expire after 24 hours.
-
-Rain and feeder events are included in proposal evidence guards. A changed event invalidates pending review; approved simulated orders remain historical records and an outage creates a replan advisory without operating hardware. The farm calculator does not automatically transfer a two-acre requirement to an entire village. Recording village rain is a separate, explicit action.
-
-The farmer source volume is a supplemental application estimate based on the chosen depth, seepage allowance, field-water credit and delivery efficiency. Forecast-only rain can suggest deferring for review; critical stress and flowering prevent that generic forecast deferral. A zero deficit means no additional irrigation is proposed. Paddy advice is linked to FAO and ICAR and does not promise universal savings.
+See `PROJECT.md` for architecture and `research/PUBLIC_EVIDENCE_AND_JEV.md` for source access and model references.
